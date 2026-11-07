@@ -17,7 +17,7 @@ Este projeto implementa uma topologia de rede corporativa no **Cisco Packet Trac
 
 ## 🏗️ Topologia da Rede
 
-> 💡 ![Topologia da Rede no Packet Tracer](./images/topologia-packet-tracer.png)
+>![Topologia da Rede no Packet Tracer](./images/topologia-packet-tracer.png)
 
 ### Tecnologias e Protocolos Implementados
 * **Segmentação L2 (VLANs & IEEE 802.1Q Trunking):** Separação de domínios de broadcast por departamento e encapsulamento `.1Q` no uplink entre Switch e Roteador.

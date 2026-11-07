@@ -1,0 +1,2 @@
+# Arquitetura-de-Rede-Segmentacao-L2-L3-e-Isolamento-de-Clientes
+Redes de hospitalidade (hotéis, pousadas e centros de convenções) enfrentam um desafio crítico de segurança: compartilhar a mesma infraestrutura física de switches e roteadores entre sistemas internos sensíveis (Recepção/PMS, servidores administrativos e câmeras de segurança CFTV) e centenas de dispositivos não confiáveis de hóspedes.

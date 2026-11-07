@@ -1,0 +1,63 @@
+enable
+configure terminal
+
+! 1. Ligando a interface física principal do roteador
+interface GigabitEthernet 0/0
+no shutdown
+exit
+
+! 2. Sub-interface da VLAN 20 (Recepção)
+interface GigabitEthernet 0/0.20
+encapsulation dot1Q 20
+ip address 10.10.20.1 255.255.255.0
+exit
+
+! 3. Sub-interface da VLAN 30 (CFTV / Câmeras)
+interface GigabitEthernet 0/0.30
+encapsulation dot1Q 30
+ip address 10.10.30.1 255.255.255.0
+exit
+
+! 4. Sub-interface da VLAN 100 (Hóspedes)
+interface GigabitEthernet 0/0.100
+encapsulation dot1Q 100
+ip address 172.16.0.1 255.255.255.0
+exit
+
+! 5. Criando o DHCP automático para cada rede (opcional, facilita os testes!)
+ip dhcp excluded-address 10.10.20.1
+ip dhcp excluded-address 10.10.30.1
+ip dhcp excluded-address 172.16.0.1
+
+ip dhcp pool POOL_RECEPCAO
+network 10.10.20.0 255.255.255.0
+default-router 10.10.20.1
+exit
+
+ip dhcp pool POOL_CFTV
+network 10.10.30.0 255.255.255.0
+default-router 10.10.30.1
+exit
+
+ip dhcp pool POOL_HOSPEDES
+network 172.16.0.0 255.255.255.0
+default-router 172.16.0.1
+exit
+
+! 6. FIREWALL (ACL Estendida): Bloqueando Hóspedes de acessar Recepção e Câmeras
+ip access-list extended BLOQUEIA_HOSPEDES
+! Bloqueia acesso da rede de hóspedes para a VLAN 20 (Recepção)
+deny ip 172.16.0.0 0.0.0.255 10.10.20.0 0.0.0.255
+! Bloqueia acesso da rede de hóspedes para a VLAN 30 (Câmeras)
+deny ip 172.16.0.0 0.0.0.255 10.10.30.0 0.0.0.255
+! Permite todo o resto (ex: sair para a Internet se você ligar uma WAN)
+permit ip any any
+exit
+
+! 7. Aplicando a regra de Firewall na entrada da sub-interface dos Hóspedes
+interface GigabitEthernet 0/0.100
+ip access-group BLOQUEIA_HOSPEDES in
+exit
+
+end
+copy running-config startup-config

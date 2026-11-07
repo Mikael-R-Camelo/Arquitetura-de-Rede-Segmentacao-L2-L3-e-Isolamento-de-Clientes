@@ -1,0 +1,42 @@
+enable
+configure terminal
+
+! 1. Criando as VLANs do Hotel
+vlan 20
+name RECEPCAO
+vlan 30
+name CFTV_CAMERAS
+vlan 100
+name HOSPEDES
+exit
+
+! 2. Portas da Recepção (VLAN 20 normal - PCs se enxergam normalmente)
+interface range FastEthernet 0/1 - 2
+switchport mode access
+switchport access vlan 20
+spanning-tree portfast
+exit
+
+! 3. Porta da Câmera / Servidor CFTV (VLAN 30)
+interface FastEthernet 0/3
+switchport mode access
+switchport access vlan 30
+spanning-tree portfast
+exit
+
+! 4. Portas dos Quartos 101 e 102 (VLAN 100 COM ISOLAMENTO DE PORTA!)
+interface range FastEthernet 0/10 - 11
+switchport mode access
+switchport access vlan 100
+switchport protected
+spanning-tree portfast
+exit
+
+! 5. Porta Trunk que sobe para o Roteador carregando todas as VLANs
+interface GigabitEthernet 0/1
+switchport mode trunk
+switchport trunk allowed vlan 20,30,100
+exit
+
+end
+copy running-config startup-config

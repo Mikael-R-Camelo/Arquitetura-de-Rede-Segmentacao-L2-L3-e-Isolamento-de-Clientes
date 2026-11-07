@@ -49,6 +49,19 @@ Este projeto implementa uma topologia de rede corporativa no **Cisco Packet Trac
 
 ---
 
+## 🧪 Validação e Testes de Segurança
+
+Para comprovar a eficácia das políticas de isolamento, foram executados quatro cenários de teste de conectividade e inspeção de pacotes (ICMP/ARP):
+
+| # | Origem | Destino | Resultado Esperado | Camada de Atuação / Mecanismo |
+| :-: | :--- | :--- | :---: | :--- |
+| **1** | **Quarto 101** (`172.16.0.10`) | **Quarto 102** (`172.16.0.11`) | ❌ **Bloqueado** (*Request Timed Out*) | **Camada 2 (Switch):** Quadro ARP descartado entre portas com `switchport protected`. |
+| **2** | **Quarto 101** (`172.16.0.10`) | **Câmera CFTV** (`10.10.30.50`) | ❌ **Bloqueado** (*Destination Host Unreachable*) | **Camada 3 (Router):** Pacote descartado pela ACL `BLOQUEIA_HOSPEDES` na sub-interface `.100`. |
+| **3** | **Quarto 101** (`172.16.0.10`) | **Gateway Hóspedes** (`172.16.0.1`) | ✅ **Permitido** (*Reply from 172.16.0.1*) | Porta protegida possui permissão de comunicação com a porta de Uplink/Promíscua. |
+| **4** | **Recepção PC0** (`10.10.20.10`) | **Câmera CFTV** (`10.10.30.50`) | ✅ **Permitido** (*Reply from 10.10.30.50*) | Roteamento Inter-VLAN normal entre `Gi0/0.20` e `Gi0/0.30`. |
+
+---
+
 ## ⚙️ Principais Trechos de Configuração (Cisco IOS)
 
 Os arquivos completos de configuração estão disponíveis no diretório [`/configs`](./configs). Abaixo estão os blocos essenciais da implementação:
